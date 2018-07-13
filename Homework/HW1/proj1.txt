@@ -1,0 +1,63 @@
+		    Lab 1 
+                     
+1. Write three small c programs.  
+
+1). The first program "pre.c" 
+should read in a list of student names from stdin and the number of computer science courses 
+they have taken so far. The maximum number of courses is 12.  You can make up a list. To be 
+simple, you can make student name one word.  The name can be in upper- or lower-cases. The 
+input ends when an EOF is encountered. The output of the program should display the students 
+who have taken more than (>) 5 courses.  
+ 
+For example, the following are the inputs to "pre.c": 
+
+Susan 9 
+Mary  8 
+Bob   1
+John  7 
+Ctrl-D (to terminate the input.)
+         
+    then "pre.c" produces the output: 
+Susan
+Mary
+John
+
+Note: an EOF is usually 'sent' to a process by hitting a CTRL_D.  
+If you type stty -an on your unix command line, you can get info that 
+tells you which keyboard keys mean what. FYI, in c, to put values to 
+standard_out  use printf().  To get values from standard_in use scanf() 
+or getchar(). 
+
+2). The second program "sort.c" reads in a list of names from stdin and 
+prints out alphabetically-ordered names. For the same letter in upper- and
+lower-cases, you put the lower-case first. Assume there are 
+no more than 20 names. The input ends when an EOF is encountered. 
+
+For the above example, the output should be:
+
+John
+Mary
+Susan
+ 
+
+2. Write a c program to set up a child-TO-parent pipe; the child 
+should 'exec' to perform a "pre" process and its output should be 
+connected to the pipe connected to the parent, which should 'exec' to 
+perform a "sort" process.
+
+3. Write a program to take a UNIX command from the command line
+and fork() a child to execute it. The command can be a simple 
+command like: $ls or $ps, Or it can be a command with options such as
+$ls -t -l. Use argc and argv[] in the main function to pass parameters.
+When the child process is executing the command, the parent process 
+simply waits for the termination of the child process. The process 
+id of the parent and the child should be printed out using getpid() and
+getppid() functions.
+
+ 
+Submission:
+
+In order not to lose any files, you'd better zip all your files into a .zip file. 
+Submit your project to TRACS. You should write a readme textfile telling the 
+grader how to run your programs. Without this file, it is very likely that your 
+project will not be run properly.
