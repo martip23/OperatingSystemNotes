@@ -52,6 +52,4 @@ main()
  {
   printf("write blocked after %d characters\n", count);
   exit(0);
- }   
- 
- 
+ }    
