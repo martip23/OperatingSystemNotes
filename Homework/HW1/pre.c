@@ -6,20 +6,20 @@ int main() {
 	
 	int i = 0;
 	while (!feof(stdin)) {
-		scanf(" %s", studentName[i]);
-		scanf(" %d", &numCourses[i]);
+		scanf(" %s %d", studentName[i], &numCourses[i]);
 		i++;
 	}
 	
 	int j = 0;
 	
 	putc('\n', stdout);
-	putc('\n', stdout);
 		
-	while ((i-1)!= j) {
-		printf("%s ", studentName[j]);
-		printf("%d\n", numCourses[j]);
+	while (i > (j+1)) {
+		if (numCourses[j] >5) {
+			printf("%s ", studentName[j]);
+		}
 		j++;
 	}
+	
 	return 0;
 }
