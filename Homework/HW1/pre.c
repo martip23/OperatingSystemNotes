@@ -14,9 +14,9 @@ int main() {
 	
 	putc('\n', stdout);
 		
-	while (i > (j+1)) {
+	while (j < i) {
 		if (numCourses[j] >5) {
-			printf("%s ", studentName[j]);
+			printf("%s \n", studentName[j]);
 		}
 		j++;
 	}
