@@ -31,13 +31,16 @@ int main() {
 	else {
 
 		// Take item i to be the lowest
-		for (int i = 0; i < n; i++) {
+		int i;
+		for (i = 0; i < n; i++) {
 			char tempWord[MAX_CHAR];
 
-			for (int j = i + 1; j < (n - 1); j++) {
+			int j;
+			for (j = i + 1; j < (n - 1); j++) {
 
 				// Compare 1st character of i and j (which is i + i, ++)
-				for (int k = 0; k < MAX_CHAR; k++) {
+				int k;
+				for (k = 0; k < MAX_CHAR; k++) {
 
 					// These operations subtract 90 from char to prioritize
 					// the lowercase characters.
@@ -100,7 +103,8 @@ int main() {
 			}
 		}
 	}
-	for(int j = 0; j < (n - 1); j++) {
+	int j;
+	for(j = 0; j < (n - 1); j++) {
 		printf("%s \n", nameList[j]);
 	}
 	return 0;
