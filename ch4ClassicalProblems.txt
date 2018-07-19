@@ -1,0 +1,270 @@
+* Producer/Consumer Problem
+
+semaphore mutex = 1
+semaphore empty = N
+semaphore full = 0
+
+producer:                      consumer:
+
+while (true) do               while(true) do
+ <produce an item>               P(full)
+ P(empty)                        P(mutex)
+ P(mutex)                      <return an item>
+ <put an item in the buffer>   V(mutex)  
+ V(mutex)                      V(empty)
+ V(full)                       <consume an item>
+
+
+* Readers/Writers Problem
+Solution 1: readers can starve writers
+
+rc = 0; db = 1; mutex = 1;
+
+reader:                  writer:
+
+while(true) {           while(true) {
+ P(mutex);                think-up-data();
+ rc = rc + 1;             P(db);
+ if (rc == 1) P(db);      write-data-base();
+ V(mutex);                V(db);
+ read-data-base();        }
+ 
+ P(mutex);
+ rc = rc - 1;
+ if (rc ==0) V(db);
+ V(mutex);
+ use-data-read();
+ }
+
+
+Solution 2: writers can starve readers
+
+nw = 0; nr = 0; signaled = false; 
+all semaphores are initialized to 1
+
+Reader:                 Writer:
+
+ P(read1);               P(mutex2);
+ V(read1);               nw = nw+1;
+                         V(mutex2);
+
+ P(mutex1);              P(writer);
+ nr = nr + 1;            if (signaled==false) 
+ if (nr == 1) P(db)        { P(read1);
+ V(mutex1);                  P(db);
+                             signaled = true;
+ <read the db>              }
+                         <write the db>
+ P(mutex1);              P(mutex2);
+ nr = nr -1;             nw = nw - 1;
+ if (nr ==0) V(db);      if (nw==0)
+ V(mutex1);               {
+                            V(read1);
+                            V(db);
+                            signaled = false;
+                           }
+                          V(mutex2);
+                          V(writer);
+                           
+
+Solution 3: writers can starve readers
+int rc=wc=0; 
+Semaphore mutex1, mutex2, mutex3, db, r; (all the initials of semaphores are 1)
+
+Reader:                                 Writer:
+
+P(mutex3);                              P(mutex2);
+   P(r);                                wc = wc + 1;
+       P(mutex1);                       if (wc == 1) P(r);
+         rc = rc + 1;                   V(mutex2);
+         if (rc == 1) P(db);            P(db);
+       V(mutex1);
+   V(r);                                <write to db>
+V(mutex3);                                 
+                                        V(db);
+   <read the db>                        P(mutex2);
+                                        wc = wc - 1;
+P(mutex1);                              if (wc ==0 ) V(r);
+rc = rc - 1;                            V(mutex2);
+if (rc ==0 ) V(db);
+V(mutex1);
+
+
+
+* Dining Philosopher Problem
+
+Solution 1:(Wrong)
+
+Philosopher(i):
+
+ while (true)
+   {
+    <think>;
+    take_fork(i);
+    take_fork(i+1 mod 5);
+    <eat>;
+    put_fork(i);
+    put_fork(i+1 mod 5);
+}
+
+
+
+Solution 2:
+
+#define N 5
+#define LEFT (i-1)%N
+#define RIGHT (i+1)%N
+#define THINKING 0
+#define HUNGRY 1
+#define EATING 2
+
+typedef int semaphore;
+int state[N];
+semaphore mutex = 1;
+semaphore s[N];
+
+void philosopher(int i)
+{
+ while(TRUE) {
+   think();
+   take_forks(i);
+   eat();
+   put_forks(i);
+  }
+}
+
+void take_forks(int i)
+{
+  P(&mutex);
+  state[i] = HUNGRY;
+  test(i);
+  V(&mutex);
+  P(&s[i]);
+}
+
+void put_forks(int i)
+{
+ P(&mutex);
+ state[i] = THINKING;
+ test(LEFT);
+ test(RIGHT);
+ V(&mutex);
+}
+
+void test(int i)
+{
+ if (state[i]==HUNGRY && state[LEFT]!=EATING
+    && state[RIGHT]!=EATING) {
+      state[i] = EATING;
+      V(&s[i]);
+   }
+}
+
+
+* Readers/Writers Problem using Monitors
+
+Reader:                  Writer:
+
+while(1)                 while(1) 
+{                        {
+ RW_Monitor.rper();       RW_Monitor.wper();
+ <read>                   <write>
+ RW_Monitor.rend();       RW_Monitor.wend();
+}                         }
+
+Solution 1 using monitors:
+
+int rc=0; int wc=0; condition db, readers;
+
+entry rper()                entry wper()
+{                            {
+ if (wc>0) wait(readers);     wc++;
+ rc++;                        if(rc>0||wc>1)
+ signal(readers);                wait(db);
+}                            }
+
+entry rend()              entry wend()
+{                         {
+ rc--;                     wc--;
+ if (rc==0) signal(db);    if(wc==0) signal(readers);
+}                          signal(db);
+                           }
+
+
+Solution 2 using monitors:
+
+int rc=0; boolean w=false;
+
+entry rper()               entry wper()
+{                          {
+ rc++;                      if (rc>0|| w)
+ if(w)                         wait(db);
+   if (rc==1) wait(db);     w=true;
+   else wait(readers);     }
+ signal(readers);
+}
+
+entry rend()               entry wend()
+{                          {
+ rc--;                      w=false;
+ if (rc==0)                 signal(db);
+   signal(db);              }
+}
+
+
+* Producer/Consumer Problem using Monitors
+
+Monitor pc; condition full, empty; int count=0;
+
+Producer:                 Consumer:
+
+while(1)                  while(1)
+{                         {
+ <produce an item>         <consume an item>
+ pc.enter(item);           pc.remove(item);
+}                          }
+
+entry enter(item)              entry remove(item)
+{                              {
+ if (count==N) wait(full);     if(count==0) wait(empty);
+ <enter an item>;              <remove an item>
+ count++;                      count--;
+ if (count==1) signal(empty);  if(count==N-1) signal(full);
+}                               }
+
+
+
+* 2 out of 2 Barrier Problem using Monitor
+
+monitor M; int count =0;
+condition q;
+
+entry per()
+{
+ count++;
+ if (count<2) wait(q);
+ signal(q);
+}
+
+
+* Build a semaphore using monitor
+
+Monitor M; int i, qc; condition q;
+
+entry init(x)
+{
+ i = x;
+ qc = 0;
+}
+
+entry p()
+{
+ if (i==0) {qc++; wait(q);}
+ else i--;
+}
+
+entry v()
+{
+ if (qc>0) {qc--; signal(q);}
+ i++;
+}

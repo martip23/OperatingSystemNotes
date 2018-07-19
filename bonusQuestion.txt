@@ -1,0 +1,2 @@
+Find a fair solution to the writers problem.
+if (r_1, w_1, r_2, r_3), then neither should be starved.
