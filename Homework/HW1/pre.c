@@ -11,9 +11,9 @@ int main() {
 	char studentName[12][20];
 	
 	int i = 0;
-	printf("\nEnter name and classes taken. This program will output students \n");
-	printf("who have taken more than 5 classes. Press \"CTRL+D\" to end input\n");
-	printf("Eg: Patrick 8\n\n");
+//	printf("\nEnter name and classes taken. This program will output students \n");
+//	printf("who have taken more than 5 classes. Press \"CTRL+D\" to end input\n");
+//	printf("Eg: Patrick 8\n\n");
 
 	// Take name of student and integer, add to respective arrays.
 	while (!feof(stdin)) {

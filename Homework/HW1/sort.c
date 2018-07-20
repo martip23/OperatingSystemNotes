@@ -7,10 +7,10 @@
 **/
 
 int main() {
-
-	printf("\nEnter names to alphabetize. This program will output names in  \n");
-	printf("alphabetical order with lowercase before uppercase. Press \"CTRL+D\" to end input\n");
-	printf("Seperate names by enter.\n\n");
+//
+//	printf("\nEnter names to alphabetize. This program will output names in  \n");
+//	printf("alphabetical order with lowercase before uppercase. Press \"CTRL+D\" to end input\n");
+//	printf("Seperate names by enter.\n\n");
 	
 	const int MAX_NAMES = 12;
 	const int MAX_CHAR = 20;

@@ -10,3 +10,5 @@ HOW TO BUILD:
 2) Type $make all
 	(This will compile all files)
 3) Run files using $./[filename]
+
+File names {pre, sort, fork, pipe}
