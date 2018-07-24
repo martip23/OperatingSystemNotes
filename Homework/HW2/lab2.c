@@ -9,7 +9,9 @@ int main()
 {
 char *path, *argv[20], buf[80], n, *p;
 
-int m, status, inword, continu, pid, pid2;
+int m, status, inword, continu;
+int pid = -1;
+int pid2 = -1;
 
 while(1) {
 
@@ -33,12 +35,17 @@ while ( ( n = getchar() ) != '\n'  || continu ) {
 	}	
 	else if ( n == '<') {
 		printf("< DETECTED\n");
+
+
+
+
 	} else if ( n == '|') {
-		pid;
+		printf("| DETECTED\n");
+		int pid;
 		int fd[2];
 		
 		// Create pipe
-		if (pipe(fd))
+		if (pipe(fd) == -1)
 			printf("ERROR! PIPE NOT CREATED for some reason");
 
 		// Create child
@@ -49,11 +56,10 @@ while ( ( n = getchar() ) != '\n'  || continu ) {
 			printf("ERROR! Child not created for some reason\n");
 		}
 
-		// Child section
+		// Child create grandchild
 		else if (pid == 0) {
-
-			// Create grandchild
 			pid2 = fork();
+			wait(NULL);
 
 			// Child read from pipe
 			if (pid2 > 0) {
@@ -63,7 +69,10 @@ while ( ( n = getchar() ) != '\n'  || continu ) {
 				close(fd[1]);
 
 				m = 0;
-				wait(NULL);	
+				*p++;
+
+				wait(NULL);
+
 			}
 			// Grandchild write to pipe
 			else if (pid2 == 0) {
@@ -74,8 +83,8 @@ while ( ( n = getchar() ) != '\n'  || continu ) {
 
 				break;
 			}
-		}
-		printf("| DETECTED\n");
+		} else break;
+
 	} else if ( n == '>') {
 		printf("> DETECTED\n");
 	} else if ( n == '\n' ) {
@@ -101,15 +110,18 @@ while ( ( n = getchar() ) != '\n'  || continu ) {
 
 argv[m] = 0;
 
-printf("Argv[0] = %s\n", argv[0]);
+//printf("Argv[0] = %s\n", argv[0]);
 
 if ( strcmp(argv[0],"quit") == 0 ) exit (0);
 
-
-
-if ( pid == 0 || pid2 == 0)
+if (pid == 0 || pid2 == 0) {
+//	printf("PID(CH): %d\n", getpid());
+ 	execvp( argv[0], argv);
+ 	printf("Didn't exec\n");
+} else if ( fork() == 0 )
 
  	{
+// 	printf("PID: %d\n", getpid());
 	execvp( argv[0], argv );
 	printf ( " didn't exec \n ");
 	}
