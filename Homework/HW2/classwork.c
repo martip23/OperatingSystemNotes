@@ -1,6 +1,9 @@
 for (j = 0; j <= pipes; j++) {
 	if (pid>0)
 	{
+		if (j == 0) {
+			// First child
+		}
 		if (j>0)
 		{
 			close(l_fd[0])

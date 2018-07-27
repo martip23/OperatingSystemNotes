@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <fcntl.h>
 int main()
 {
 char *path, *argv[20], buf[80], n, *p;
@@ -44,81 +45,76 @@ while ( ( n = getchar() ) != '\n'  || continu ) {
 	}
 }	
 
+char *firstArgs[20];
 *p++ = 0;
-
 argv[m] = 0;
 
-//printf("Argv[0] = %s\n", argv[0]);
-for (int i = 0; i < (m-1); i++) {
-	printf("i=%d\n", i);
-	printf("m=%d\n", m);
-	char *argvp[20];
-	printf("%s\n", argv[i]);
-	// if((strcmp(argv[i], "|") != 0) && ((strcmp(argv[i],"<") != 0)) 
-	// 	&& (strcmp(argv[i], ">") != 0)) {
-	// 	strcpy(argvp[i], argv[i]);
-	// 	printf("STRCPY CALLED\n");
-	// }
-	if (strcmp(argv[i], "|") == 0){
-		char *argvc[20];
-		printf("i=%d\n", i);
+int inRedirect = 0, pipeCount = 0, outRedirect = 0;
 
-		for (int j = (i + 1), c = 0; j < m; j++) {
-			printf("c=%d\n", c);
-			printf("j=%d\n", j);
-			strcpy(argvc[c], argv[j]);
-			c++;
-		}
- 
-		int pid;
-		int fd[2];
-
-		printf("%s\n", "Making pipe");
-		if (pipe(fd) == -1)
-			printf("Pipe not created");
-
-		pid = fork();
-
-		if (pid < 0)
-			printf("Child not created");
-
-		/**
-		Set parent to push to pipe
-		**/
-		else if (pid > 0) {
-			close(1);
-			dup(fd[1]);
-			close(fd[1]);
-			close(fd[0]);
-		}
-		/**
-		Set child to read from pipe and run
-		**/
-		else {
-			close(0);
-			dup(fd[0]);
-			close(fd[0]);
-			close(fd[1]);
-
-			wait(NULL);
-
-			if(execvp(argvc[0], argvc) == -1)
-				printf("Error with child pipe\n");
+// Get redirect and pipe counts
+for (int i = 0, j = 0; i < m; i++) {
+	if (*argv[i] == '<') {
+		inRedirect = 1;
+	} else if (*argv[i] == '|') {
+		pipeCount++;
+	} else if (*argv[i] == '>') {
+		outRedirect = 1;
+	} else {
+		if (!inRedirect && !pipeCount && !outRedirect) {
+			printf("Copy: %s\n", argv[i]);
+			firstArgs[i] = argv[i];
+			printf("Copied:%s\n", firstArgs[i] );
 		}
 	}
-	printf("OUT OF FOR\n");
 }
-printf("Out Of Loop\n");
+
+printf("IR: %d PC: %d OR: %d\n",inRedirect,pipeCount,outRedirect);
+
+int pid = fork();
+
+if (pid < 0)
+	printf("ERROR: Fork not created line 76\n");
+
+// Child
+else if (pid == 0) {
+	// Perform input redirect
+	if (inRedirect) {
+		int i = 0, irIndex;
+		int file;
+
+		// Get index of '<', get filename & redirect input.
+		while (*argv[i] != '<') 
+			i++;
+		argv[i] = '\0';
+		irIndex = ++i;
+		printf("ReadFrom: %s\n", argv[irIndex]);
+		if ((file = open(argv[irIndex], O_RDONLY, 0777)) < 0)
+			printf("ERROR: Could not open file\n");
+		close(0);
+		dup(file);
+		close(file);
+
+		execvp( firstArgs[0], firstArgs );
+
+		inRedirect = 0;
+	} else if (pipeCount > 0) {
+		printf("PIPE FOUND\n");
+	} else if (outRedirect) {
+		printf("OUT FOUND\n");
+	}
+} else if (pid > 0) {
+	wait(NULL);
+}
 
 if ( strcmp(argv[0],"quit") == 0 ) exit (0);
 
-if ( fork() == 0 )
+// if ( fork() == 0 )
 
- 	{
-// 	printf("PID: %d\n", getpid());
-	execvp( argv[0], argv );
-	printf ( " didn't exec \n ");
-	}
+//  	{
+//  	printf("PID: %d\n", getpid());
+// 	execvp( firstArgs[0], firstArgs );
+// 	printf ( " didn't exec \n ");
+// 	}
 
 wait(&status);
 
