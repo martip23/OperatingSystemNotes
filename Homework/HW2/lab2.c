@@ -130,14 +130,6 @@ if ( strcmp(argv[0],"quit") == 0 ) exit (0);
 memset(firstArgs, 0, 20);
 memset(argv, 0, 20);
 
-// if ( fork() == 0 )
-
-//  	{
-//  	printf("PID: %d\n", getpid());
-// 	execvp( firstArgs[0], firstArgs );
-// 	printf ( " didn't exec \n ");
-// 	}
-
 wait(&status);
 
 }
