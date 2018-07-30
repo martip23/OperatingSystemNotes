@@ -47,26 +47,32 @@ while ( ( n = getchar() ) != '\n'  || continu ) {
 
 char *firstArgs[20];
 *p++ = 0;
-argv[m] = 0;
+argv[m] = NULL;
 
 int inRedirect = 0, pipeCount = 0, outRedirect = 0;
+int pipeLocation[20];
+
+int j = 0; // Keeps track of final argument
 
 // Get redirect and pipe counts
-for (int i = 0, j = 0; i < m; i++) {
+for (int i = 0; i < m; i++) {
+	int k = 0; // For pipe locations
 	if (*argv[i] == '<') {
 		inRedirect = 1;
 	} else if (*argv[i] == '|') {
 		pipeCount++;
+		pipeLocation[k++] = i;
 	} else if (*argv[i] == '>') {
 		outRedirect = 1;
 	} else {
 		if (!inRedirect && !pipeCount && !outRedirect) {
-//			printf("Copy: %s\n", argv[i]);
 			firstArgs[i] = argv[i];
+			j = i; j++;
 			printf("Copied:%s\n", firstArgs[i] );
 		}
 	}
 }
+firstArgs[j] = NULL;
 
 printf("IR: %d PC: %d OR: %d\n",inRedirect,pipeCount,outRedirect);
 
@@ -98,7 +104,50 @@ else if (pid == 0) {
 
 	// PIPE
 	if (pipeCount > 0) {
+		int fd[2];
 
+		for (int j = 0; j < pipeCount; j++) {
+			pipe(fd);
+			int pid2 = fork();
+
+			if (pid2 < 0)
+				printf("FORK IN PIPE NOT CREATED\n");
+
+			// Have parent write to pipe
+			else if (pid2 > 0) {
+				printf("Closing output for pid2:%d\n", pid2);
+				close (1);
+				dup(fd[1]);
+				close(fd[1]);
+				close(fd[0]);
+
+				wait(NULL);
+			}
+			// Make child read from pipe and run command
+			else {
+				close (0);
+				dup(fd[0]);
+				close(fd[0]);
+				close(fd[1]);
+//				printf("Executing child pipe; PID1:%d PID:%d\n", pid, pid2);
+
+				// Get instructions after pipe
+				for (int k = pipeLocation[j] + 1, i = 0; k < 20; k++){
+					if ((*argv[k] != '<') && (*argv[k] != '>') 
+						&& (*argv[k] != '|')) {
+						firstArgs[i] = argv[k];
+						printf("Copied into child:%s\n", firstArgs[i]);
+						i++;
+					}
+					else {
+						firstArgs[i] = NULL;
+						break;
+					}
+				}
+				close(1);
+				dup(STDOUT_FILENO);
+			}
+		}
 	} 
 
 	// Perform output redirect
@@ -119,7 +168,9 @@ else if (pid == 0) {
 		outRedirect = 0;
 	}
 
-	execvp( firstArgs[0], firstArgs );
+printf("Running arg:%s\n", firstArgs[0]);
+
+execvp( firstArgs[0], firstArgs );
 
 } else if (pid > 0) {
 	wait(NULL);
@@ -127,19 +178,7 @@ else if (pid == 0) {
 
 if ( strcmp(argv[0],"quit") == 0 ) exit (0);
 
-memset(firstArgs, 0, 20);
-memset(argv, 0, 20);
-
-// if ( fork() == 0 )
-
-//  	{
-//  	printf("PID: %d\n", getpid());
-// 	execvp( firstArgs[0], firstArgs );
-// 	printf ( " didn't exec \n ");
-// 	}
-
 wait(&status);
-
 }
 return 0;
 }
