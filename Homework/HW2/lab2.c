@@ -61,7 +61,7 @@ for (int i = 0, j = 0; i < m; i++) {
 		outRedirect = 1;
 	} else {
 		if (!inRedirect && !pipeCount && !outRedirect) {
-			printf("Copy: %s\n", argv[i]);
+//			printf("Copy: %s\n", argv[i]);
 			firstArgs[i] = argv[i];
 			printf("Copied:%s\n", firstArgs[i] );
 		}
@@ -77,15 +77,14 @@ if (pid < 0)
 
 // Child
 else if (pid == 0) {
+
 	// Perform input redirect
 	if (inRedirect) {
 		int i = 0, irIndex;
 		int file;
-
 		// Get index of '<', get filename & redirect input.
 		while (*argv[i] != '<') 
 			i++;
-		argv[i] = '\0';
 		irIndex = ++i;
 		printf("ReadFrom: %s\n", argv[irIndex]);
 		if ((file = open(argv[irIndex], O_RDONLY, 0777)) < 0)
@@ -94,19 +93,42 @@ else if (pid == 0) {
 		dup(file);
 		close(file);
 
-		execvp( firstArgs[0], firstArgs );
-
 		inRedirect = 0;
-	} else if (pipeCount > 0) {
-		printf("PIPE FOUND\n");
-	} else if (outRedirect) {
-		printf("OUT FOUND\n");
+	} 
+
+	// PIPE
+	if (pipeCount > 0) {
+
+	} 
+
+	// Perform output redirect
+	if (outRedirect) {
+		int i = 0, orIndex;
+		int file;
+
+		while (*argv[i] != '>')
+			i++;
+		orIndex = ++i;
+		printf("WriteTo: %s\n", argv[orIndex]);
+		if ((file = open(argv[orIndex], O_WRONLY, 0777)) < 0)
+			printf("ERROR: COULD NOT WRITE TO FILE\n");
+		close(1);
+		dup(file);
+		close(file);
+
+		outRedirect = 0;
 	}
+
+	execvp( firstArgs[0], firstArgs );
+
 } else if (pid > 0) {
 	wait(NULL);
 }
 
 if ( strcmp(argv[0],"quit") == 0 ) exit (0);
+
+memset(firstArgs, 0, 20);
+memset(argv, 0, 20);
 
 // if ( fork() == 0 )
 
