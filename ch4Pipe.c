@@ -15,14 +15,14 @@ pid = fork(); // New process
 if (pid < 0) { // ERROR
 }
 else if (pid > 0) { // Parent
-	close(1);	// Closes the parents 
+	close(1);	// Directs parents out to pipe 
 	dup(fd[1]);
 	close(fd[1]);
 	close(fd[0]);
 	exec("ls", argv*);
 }
 else {		// Child (pid == 0)
-	close(0);
+	close(0); // Directs childs to read from pipe
 	dup(fd[0]);
 	close(fd[0]);
 	close(fd[1]);
