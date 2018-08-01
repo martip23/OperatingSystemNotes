@@ -11,4 +11,10 @@ HOW TO BUILD:
 	(This will compile all files)
 3) Run files using $./[filename]
 
-File names {}
+File names {lab2, pre, sort}
+
+When running pre & sort type ./
+
+I worked very hard on this program. I got most functions working correctly. Input redirection and output redirection work correctly. Pipe only works for in/out redirection. 
+
+input.dat and out.dat have been provided for testing.

@@ -121,7 +121,6 @@ else if (pid == 0) {
 				close(fd[1]);
 				close(fd[0]);
 
-				wait(NULL);
 			}
 			// Make child read from pipe and run command
 			else {
@@ -144,11 +143,9 @@ else if (pid == 0) {
 						break;
 					}
 				}
-				close(1);
-				dup(STDOUT_FILENO);
 			}
 		}
-	} 
+	}
 
 	// Perform output redirect
 	if (outRedirect) {
