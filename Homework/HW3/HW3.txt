@@ -1,0 +1,33 @@
+                            Lab 3   
+
+Three salesmen come to a manufacturer to get some T-shirts to sell on the market. The total number of T-shirts is 1000. Saleman A each time takes 1/3 of the remaining T-shirts. B takes 1/4 of the remaining T-shirts and C takes 1/5 of the remaining. If the number of T-shirts for a saleman to take is not an integer, round it up to the ceiling integer. For example, if the result is 3.14, round it up to 4. 
+
+Use three threads to simulate this. Each thread should execute in a loop. When the T-shirts are gone, stop all threads and terminate the program. Print out the T-shirts taken by each salesman each time. In the end, you add up all the T-shirts given out. If the total does not come up to 1000, your program is wrong.
+
+a. Write a program without considering the mutual exclusion. Run the
+program several times to show that mutual exclusion is not guaranteed and the result is not correct. 
+
+b. Write the program again considering the mutual exclusion. Run the 
+program several times to show that mutual exclusion is guaranteed.
+
+To make longer execution of threads, use some sleep(n) functions in 
+the program. Experiment with n to choose the best one to show the 
+results.
+
+The output may look like this (yours maybe different):
+
+A takes away 334 T-shirts.
+B takes away 167 T-shirts.
+C takes away 100 T-shirts.
+B takes away 100 T-shirts.
+....
+
+The total number of T-shirts given out is: ...
+
+
+Submission:
+
+In order not to lose any files, you'd better zip all your files into a .zip file. 
+Submit your project to TRACS. You should write a readme textfile telling the grader how to run your programs. Without this file, it is very likely that your project will not be run properly. 
+
+  
