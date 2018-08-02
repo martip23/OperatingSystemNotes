@@ -19,7 +19,7 @@ void *salesmanA() {
 		shirtsTaken += shirtCount;
 		printf("Salesman %c took %d shirts.\n", SALESMAN_ID, shirtCount);
 		shirtsLeft -= shirtCount;
-		sleep(1);
+//		sleep(1);
 	}
 }
 
@@ -33,7 +33,7 @@ void *salesmanB() {
 		shirtsTaken += shirtCount;
 		printf("Salesman %c took %d shirts.\n", SALESMAN_ID, shirtCount);
 		shirtsLeft -= shirtCount;
-		sleep(1);
+//		sleep(1);
 	}
 }
 
@@ -47,7 +47,7 @@ void *salesmanC() {
 		shirtsTaken += shirtCount;
 		printf("Salesman %c took %d shirts.\n", SALESMAN_ID, shirtCount);
 		shirtsLeft -= shirtCount;
-		sleep(1);
+//		sleep(1);
 	}
 }
 
@@ -55,6 +55,8 @@ int main () {
 
 	printf("Starting with %d shirts\n", ITEMS_AVAILABLE);
 	pthread_t threadA, threadB, threadC;
+
+//	pthread_setconcurrency(3);
 
 	pthread_create(&threadA, NULL, salesmanA, NULL);
 	pthread_create(&threadB, NULL, salesmanB, NULL);
@@ -65,7 +67,7 @@ int main () {
 	pthread_join(threadC, NULL);
 
 	printf("\nTook %d shirts.\n", shirtsTaken);
-	printf("\n%d shirts left.\n", shirtsLeft);
+//	printf("\n%d shirts left.\n", shirtsLeft);
 
 	return 0;
 }
