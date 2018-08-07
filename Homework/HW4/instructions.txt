@@ -1,0 +1,16 @@
+Homework 4 by Patrick Martinez
+8/7/2018
+
+A makefile has been provided to make compiling easy and to make sure
+this program is run exactly as they are intended to on my end.
+This program has been tested and works on the TX State Zeus server.
+
+HOW TO BUILD:
+1) Open terminal in this directory
+2) Type $make all
+	(This will compile all files)
+3) Run files using $./[filename]
+
+File names {paging}
+
+Program will ask for a reference string size. Up to 30 is valid. It then creates a random string of integers. Program then displays the output from the optimal and LRU algorithms while counting page faults.

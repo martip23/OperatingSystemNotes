@@ -1,5 +1,5 @@
 CC=gcc
-FLAGS=-pthread
+FLAGS=-pthread -std=c99
 ARGS=-o
 
 all:
